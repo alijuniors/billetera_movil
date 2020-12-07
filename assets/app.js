@@ -11,11 +11,17 @@ import './styles/app.css';
 // start the Stimulus application
 import './bootstrap';
 
-import Vue from 'vue';
-import App from './vue/App';
-import './styles/app.css';
+import Vue from 'vue'
+import App from './vue/App'
+import router from './vue/router'
+import vuetify from './vue/plugins/vuetify'
+import '@babel/polyfill'
+import 'roboto-fontface/css/roboto/roboto-fontface.css'
+import '@mdi/font/css/materialdesignicons.css'
+
 
 new Vue({
-    el: '#app',
+    router,
+    vuetify,
     render: h => h(App)
-});
+}).$mount('#app')
