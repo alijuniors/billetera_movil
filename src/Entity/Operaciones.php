@@ -32,6 +32,12 @@ class Operaciones
      */
     private $token;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Personas::class)
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $persona;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +75,18 @@ class Operaciones
     public function setToken(?string $token): self
     {
         $this->token = $token;
+
+        return $this;
+    }
+
+    public function getPersona(): ?Personas
+    {
+        return $this->persona;
+    }
+
+    public function setPersona(?Personas $persona): self
+    {
+        $this->persona = $persona;
 
         return $this;
     }

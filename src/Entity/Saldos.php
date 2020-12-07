@@ -22,6 +22,12 @@ class Saldos
      */
     private $monto;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Personas::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $persona;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -35,6 +41,18 @@ class Saldos
     public function setMonto(float $monto): self
     {
         $this->monto = $monto;
+
+        return $this;
+    }
+
+    public function getPersona(): ?Personas
+    {
+        return $this->persona;
+    }
+
+    public function setPersona(Personas $persona): self
+    {
+        $this->persona = $persona;
 
         return $this;
     }
