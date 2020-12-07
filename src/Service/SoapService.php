@@ -51,18 +51,23 @@ class SoapService
     public function recargar($data)
     {
         $r = [0,0,0];
-        $persona = $this->em->getRepository(Personas::class)->findOneBy([
+        $persona = $this->em->getRepository('App\Entity\Personas')->findOneBy([
             'documento' => $data['documento'],
             'celular' => $data['celular']
         ]);
 
-        if ($persona != false) {
+        if (!empty($persona->getId())) {
             $r[0] = 1;
             $operacion = (new Operaciones())
                 ->setMonto($data['monto'])
-                ->setTipo($data['tipo']);
+                ->setTipo('recarga')
+                ->setToken(null)
+                ->setPersona($persona);
+            
+            $this->em->persist($operacion);
+            $this->em->flush();
 
-            if ($this->em->persist($operacion) != false && $this->em->flush() != false) {
+            if (!empty($operacion->getId())) {
                 $r[1] = 1;
                 $saldo = $this->em->getRepository(Saldos::class)->findOneBy([
                     'persona_id' => $persona->getId()
@@ -72,8 +77,11 @@ class SoapService
 
                     $monto = $saldo->getMonto() + $data['monto'];
                     $saldo->setMonto($monto);
-    
-                    if ($this->em->persist($saldo) != false && $this->em->flush() != false) {
+                    
+                    $this->em->persist($saldo);
+                    $this->em->flush();
+
+                    if (!empty($saldo->getId())) {
                         $r[2] = 1;
                     }
                 }

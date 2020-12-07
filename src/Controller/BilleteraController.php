@@ -42,12 +42,22 @@ class BilleteraController extends AbstractController
     {
         $person = [
             'documento' => '26250360',
-            'nombre' => 'Frank',
-            'email' => 'ejemplo',
-            'celular' => 'hola'
+            'celular' => 'hola',
+            'monto' => 500.40
         ];
-
-        $response = $this->soap->__soapCall('registrar', array($person));
+        
+        // $person = [
+        //     'documento' => '26250360',
+        //     'nombre' => 'Frank',
+        //     'email' => 'ejemplo',
+        //     'celular' => 'hola'
+        // ];
+        // $response = $this->soap->__soapCall('registrar', array($person));
+        try {
+            $response = $this->soap->__soapCall('recargar', array($person));
+        } catch (\SoapFault $th) {
+            $response = $th->faultstring;
+        }
         var_dump($response);
         return (new Response())->setContent('respuesta');
     }
