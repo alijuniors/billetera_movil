@@ -25,12 +25,21 @@ class SoapService
             ->setEmail($data['email'])
             ->setCelular($data['celular']);
 
-        if ($this->em->persist($persona) && $this->em->flush()) {
+        $this->em->persist($persona);
+        $this->em->flush();
+
+        if (!empty($persona->getId())) {
+
             $r[0] = 1;
+
             $saldo = (new Saldos())
                 ->setMonto(0)
                 ->setPersona($persona);
-            if ($this->em->persist($saldo) && $this->em->flush()) {
+
+            $this->em->persist($saldo);
+            $this->em->flush();
+
+            if (!empty($saldo->getId())) {
                 $r[1] = 1;
             }
 
