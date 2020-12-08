@@ -15,7 +15,7 @@
             <v-row justify="center">
               <v-dialog v-model="dialog" persistent max-width="290">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn v-bind="attrs" v-on="on" :disabled="!valid" color="info" class="mr-3 float-left" @click="validate">
+                  <v-btn v-bind="attrs" v-on="on" :disabled="!valid" color="info" class="mr-3 float-left" @click="consulta()">
                     consultar
                   </v-btn>
                 </template>
@@ -114,7 +114,11 @@
       consulta(){
         let documento = this.documento;
         let celular = this.celular;
-        const obj = {'test0': 'holaaaa'};
+        const obj = {
+          'tipo': 'consultar',
+          'documento': documento,
+          'celular': celular
+        };
         this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
         .then(respuesta => {
           console.log(respuesta)

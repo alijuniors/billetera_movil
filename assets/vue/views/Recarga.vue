@@ -12,7 +12,7 @@
           <v-checkbox v-model="checkbox1" :rules="[v => !!v || 'Por favor seleccione para continuar']"
             label="¿Estás de acuerdo con la información?" required></v-checkbox>
 
-            <v-btn :disabled="!valid1" color="info" class="mr-3" @click="validate1" v-bind="attrs" v-on="on">
+            <v-btn :disabled="!valid1" color="info" class="mr-3" @click="recarga()" v-bind="attrs" v-on="on">
               Recargar
             </v-btn>
           
@@ -90,16 +90,39 @@
         this.adv1 = false
       },
       recarga(){
-        let documento = 0;
-        // let celular = this.celular;
-        // let monto = this.monto;
-        const obj = {'test0': 'holaaaa'};
+        let documento = this.documento;
+        let celular = this.celular;
+        let monto = this.monto;
+        const obj = {
+          'tipo': 'recargar',
+          'documento': documento,
+          'celular': celular,
+          'monto': monto
+          };
         this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
         .then(respuesta => {
-          console.log(respuesta)
+          // console.log(respuesta)
           console.log(respuesta.data) 
         })
         .catch(error => { console.log('error')})
+      },
+      pagar(){
+        let documento = this.documento;
+        let monto = this.monto;
+        const obj = {
+          'tipo': 'pagar',
+          'documento':documento,
+          'monto':monto
+        };
+        this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
+        .then(respuesta => {
+          // console.log(respuesta)
+          console.log(respuesta.data) 
+        })
+        .catch(error => { 
+          console.log('error')
+          console.log(error)
+        })
       }
     },
   }

@@ -40,8 +40,11 @@ class BilleteraController extends AbstractController
     /**
      * @Route("/test", name="Billetera_test" )
      */
-    public function test() {
-        return $this->render('soap/index.html.twig');
+    public function test()
+    {
+        $mail = mail('frankchavezmj@gmail.com', 'Hola', 'Hola');
+        var_dump($mail);
+        return (new Response())->setContent('hola');
     }
 
     /**
@@ -49,73 +52,69 @@ class BilleteraController extends AbstractController
      */
     public function soapClient(Request $rq)
     {
-        // $rq = $_POST;
-        $rq = $rq->request->get('test0');
+        $data = json_decode($rq->getContent(),true);
         $error = [];
 
-        // switch ($rq['tipo']) {
-        //     case 'registrar':
-        //         if (!in_array(strlen($rq['documento']), range(7,20))) {
-        //             $error['error'] = 'documento';
-        //         } elseif (!in_array(strlen($rq['nombre']), range(3,25))) {
-        //             $error['error'] = 'nombre';
-        //         } elseif (!in_array(strlen($rq['email']), range(7,30))
-        //                 || !filter_var($rq['email'], FILTER_VALIDATE_EMAIL)) {
-        //             $error['error'] = 'email';
-        //         } elseif (!in_array(strlen($rq['celular']), range(7,25))) {
-        //             $error['error'] = 'email';
-        //         }
-        //         break;
+        switch ($data['tipo']) {
+            case 'registrar':
+                if (!in_array(strlen($data['documento']), range(7,20)) || !isset($data['documento'])) {
+                    $error['error'] = 'documento';
+                } elseif (!in_array(strlen($data['nombre']), range(3,25)) || !isset($data['nombre'])) {
+                    $error['error'] = 'nombre';
+                } elseif (!in_array(strlen($data['email']), range(7,30)) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)
+                    || !isset($data['email'])) {
+                    $error['error'] = 'email';
+                } elseif (!in_array(strlen($data['celular']), range(7,25)) || !isset($data['celular'])) {
+                    $error['error'] = 'email';
+                }
+                break;
             
-        //     case 'recargar':
-        //         if (!in_array(strlen($rq['documento']), range(7,20))) {
-        //             $error['error'] = 'documento';
-        //         } elseif (!in_array(strlen($rq['celular']), range(7,30))) {
-        //             $error['error'] = 'celular';
-        //         } elseif (!is_numeric($rq['monto'])) {
-        //             $error['error'] = 'monto';
-        //         }
-        //         break;
+            case 'recargar':
+                if (!in_array(strlen($data['documento']), range(7,20))) {
+                    $error['error'] = 'documento';
+                } elseif (!in_array(strlen($data['celular']), range(7,30))) {
+                    $error['error'] = 'celular';
+                } elseif (!is_numeric($data['monto'])) {
+                    $error['error'] = 'monto';
+                }
+                break;
 
-        //     case 'pagar':
-        //         if (!in_array(strlen($rq['email']), range(7,30))
-        //                 || !filter_var($rq['email'], FILTER_VALIDATE_EMAIL)) {
-        //             $error['error'] = 'email';
-        //         } elseif (!is_numeric($rq['monto'])) {
-        //             $error['error'] = 'monto';
-        //         }
-        //         break;
+            case 'pagar':
+                if (!in_array(strlen($data['email']), range(7,30))
+                        || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                    $error['error'] = 'email';
+                } elseif (!is_numeric($data['monto'])) {
+                    $error['error'] = 'monto';
+                }
+                break;
 
-        //     case 'confirmar':
-        //         if (!is_numeric($rq['id'])) {
-        //             $error['error'] = 'id'; 
-        //         } elseif (!is_numeric($rq['token']) || strlen($rq['token']) == 6) {
-        //             $error['error'] = 'token' ;
-        //         }
-        //         break;
+            case 'confirmar':
+                if (!is_numeric($data['id'])) {
+                    $error['error'] = 'id'; 
+                } elseif (!is_numeric($data['token']) || strlen($data['token']) == 6) {
+                    $error['error'] = 'token' ;
+                }
+                break;
 
-        //     case 'consultar':
-        //         if (!in_array(strlen($rq['documento']), range(7,20))) {
-        //             $error['error'] = 'documento';
-        //         } elseif (!in_array(strlen($rq['celular']), range(7,30))) {
-        //             $error['error'] = 'celular';
-        //         }
-        //         break;
-        // }
+            case 'consultar':
+                if (!in_array(strlen($data['documento']), range(7,20))) {
+                    $error['error'] = 'documento';
+                } elseif (!in_array(strlen($data['celular']), range(7,30))) {
+                    $error['error'] = 'celular';
+                }
+                break;
+        }
 
-        // if (!empty($error)) {
-        //     return new JsonResponse($error);
-        // }
+        if (!empty($error)) {
+            return new JsonResponse($error);
+        }
 
-        // try {
-        //     $response = $this->soap->__soapCall($rq['tipo'], array($rq));
-        // } catch (SoapFault $th) {
-        //     $response['error'] = $th->faultstring;
-        // }
-
-        // return (new Response())->setContent($rq);
-        // return new JsonResponse(['hhola' => 'julio']);
-        return new JsonResponse(['hhola' => $rq]);
-        // return $this->render('soap/respuesta.html.twig', ['respuesta' => 'hola'])
+        try {
+            $response = $this->soap->__soapCall($data['tipo'], array($data));
+        } catch (SoapFault $th) {
+            $response['error_soap'] = $th->faultstring;
+        }
+        
+        return new JsonResponse($response);
     }
 }

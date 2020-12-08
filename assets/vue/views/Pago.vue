@@ -6,22 +6,23 @@
 
         <v-form ref="form" v-model="valid" lazy-validation class="bg-forms">
           <h1 class="titulo-form">Pagar</h1>
-          <v-text-field v-model="documento" :counter="20" :rules="documentoRules" label="Documento" required></v-text-field>
+          <v-text-field v-model="email" :counter="20" :rules="emailRules" label="Email" required></v-text-field>
           <v-text-field v-model="monto" :rules="montoRules" label="Monto" required></v-text-field>
-          <v-checkbox v-model="checkbox1" :rules="[v => !!v || 'Por favor seleccione para continuar']"
-            label="¿Estás de acuerdo con la información?" required></v-checkbox>
+
+          <v-btn :disabled="!valid1" color="info" class="mr-3" @click="pago()" v-bind="attrs" v-on="on">
+                  Pagar
+          </v-btn>
           <template>
 
             <v-dialog v-model="dialog" persistent max-width="600px">
+
               <template v-slot:activator="{ on, attrs }">
-                <v-btn :disabled="!valid1" color="info" class="mr-3" @click="pago()" v-bind="attrs" v-on="on">
-                  Pagar
-                </v-btn>
+                
                 <v-btn color="success" class="mr-3 float-right"  v-bind="attrs" v-on="on">
                   Confirmar
                 </v-btn>
-
               </template>
+
               <v-row justify="center">
                 <v-card>
                   <v-card-title>
@@ -42,7 +43,7 @@
                         </v-col>
                         <v-col cols="12">
                           <v-form ref="form" v-model="valid" lazy-validation>
-                            <v-btn :disabled="!valid2" color="success" class="mr-4" @click="confirmacion">
+                            <v-btn :disabled="!valid2" color="success" class="mr-4" @click="confirmacion()">
                               Confirmar
                             </v-btn>
                             <v-btn color="error" class="mr-4" @click="reset2">
@@ -61,6 +62,7 @@
                   </v-card-actions>
                 </v-card>
               </v-row>
+
             </v-dialog>
 
           </template>
@@ -115,10 +117,10 @@
     data: () => ({
       dialog: false,
       valid1: true,
-      documento: '',
-      documentoRules: [
-        v => !!v || 'El documento es requerido',
-        v => (v && v.length <= 20) || 'El documento debe tener maximo 20 caracteres',
+      email: '',
+      emailRules: [
+        v => !!v || 'El Email es requerido',
+        v => /.+@.+\..+/.test(v) || 'El email debe ser válido',
       ],
       monto:'',
       montoRules: [
@@ -131,10 +133,6 @@
       desabilitado: true,
       valid2: true,
       id: '',
-      // idRules: [
-      //   v => !!v || 'El id de la compra es requerido',
-      //   v => (v && v.length <= 15) || 'El id debe tener menos de 15 caracteres',
-      // ],
       token: '',
       tokenRules: [
         v => !!v || 'El token es requerido',
@@ -187,23 +185,34 @@
         this.adv2 = false
       },
       pago(){
-        let documento = 0;
-        // let monto = this.monto;
-        const obj = {'test0': 'holaaaa'};
+        let email = this.email;
+        let monto = this.monto;
+        const obj = {
+          'tipo': 'pagar',
+          'email': email,
+          'monto': monto
+        };
         this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
         .then(respuesta => {
-          console.log(respuesta)
+          // console.log(respuesta)
           console.log(respuesta.data) 
         })
-        .catch(error => { console.log('error')})
+        .catch(error => {
+          console.log('Error Axios'),
+          console.log(error)
+        })
       },
       confirmacion(){
         let id = this.id;
-        // let token = this.token;
-        const obj = {'test0': 'holaaaa'};
+        let token = this.token;
+        const obj = {
+          'tipo': 'confirmar',
+          'id': id,
+          'token': token
+          };
         this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
         .then(respuesta => {
-          console.log(respuesta)
+          // console.log(respuesta)
           console.log(respuesta.data) 
         })
         .catch(error => { console.log('error')})

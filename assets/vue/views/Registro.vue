@@ -104,17 +104,22 @@
         this.advertencia = false
       },
       registro(){
-        let documento = 0;
-        // let nombre = this.name;
-        // let email = this.email;
-        // let celular = this.celular;
-        const obj = {'test0': 'holaaaa'};
+        let documento = this.documento;
+        let nombre = this.name;
+        let email = this.email;
+        let celular = this.celular;
+        const obj = {
+          'tipo': 'registrar',
+          'documento': documento,
+          'nombre': nombre,
+          'email': email,
+          'celular': celular
+        };
         this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
         .then(respuesta => {
-          console.log(respuesta)
           console.log(respuesta.data) 
         })
-        .catch(error => { console.log('error')})
+        .catch(error => { console.log('Error Axios')})
 
         if(this.respuesta.data){
           this.advertencia = true

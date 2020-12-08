@@ -91,10 +91,9 @@ class SoapService
     
     public function pagar($data)
     {
-        $r = [0,0];
+        $r = [0,0,0];
         $persona = $this->em->getRepository(Personas::class)->findOneBy([
-            'documento' => $data['documento'],
-            'celular' => $data['celular']
+            'email' => $data['email'],
         ]);
 
         if (!empty($persona->getId())) {
@@ -111,8 +110,10 @@ class SoapService
 
             if (!empty($operacion->getId())) {
                 $r[1] = 1;
-                $r['id'] = $operacion->getId();
-                $r['token'] = $operacion->getToken();
+                $msg = 'Su id de sesion es: '.$operacion->getId().' y su token: '.$operacion->getToken();
+                if (mail($persona->getEmail(), 'Notification', $msg)) {
+                    $r[2] = 1;
+                }
             }
         }
 
