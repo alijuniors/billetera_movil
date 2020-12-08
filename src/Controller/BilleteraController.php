@@ -23,7 +23,7 @@ class BilleteraController extends AbstractController
     }
 
     /**
-     * @Route("/billetera", name="billetera")
+     * @Route("/", name="billetera")
      */
     public function index(): Response
     {

@@ -70,20 +70,17 @@ class SoapService
             if (!empty($operacion->getId())) {
                 $r[1] = 1;
                 $saldo = $this->em->getRepository(Saldos::class)->findOneBy([
-                    'persona_id' => $persona->getId()
+                    'persona' => $persona
                 ]);
+
+                $monto = $saldo->getMonto() + $data['monto'];
+                $saldo->setMonto($monto);
                 
-                if ($saldo) {
+                $this->em->persist($saldo);
+                $this->em->flush();
 
-                    $monto = $saldo->getMonto() + $data['monto'];
-                    $saldo->setMonto($monto);
-                    
-                    $this->em->persist($saldo);
-                    $this->em->flush();
-
-                    if (!empty($saldo->getId())) {
-                        $r[2] = 1;
-                    }
+                if (!empty($saldo->getId())) {
+                    $r[2] = 1;
                 }
             }
         }
