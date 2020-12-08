@@ -4,10 +4,10 @@
       <v-col cols="12" sm="4" class="c-form offset-sm-4">
         <v-form ref="form" v-model="valid" lazy-validation class="bg-forms">
           <h1 class="titulo-form">Consulta</h1>
-          <v-text-field v-model="documento" :counter="15" :rules="documentoRules" label="Documento" required>
+          <v-text-field v-model="documento" :counter="20" :rules="documentoRules" label="Documento" required>
           </v-text-field>
 
-          <v-text-field v-model="celular" :counter="15" :rules="celularRules" label="Celular" required></v-text-field>
+          <v-text-field v-model="celular" :counter="25" :rules="celularRules" label="Celular" required></v-text-field>
 
           <v-checkbox v-model="checkbox" :rules="[v => !!v || 'Por favor seleccione para continuar']"
             label="¿Estás de acuerdo con la información?" required></v-checkbox>
@@ -80,12 +80,12 @@
       documento: '',
       documentoRules: [
         v => !!v || 'El documento es requerido',
-        v => (v && v.length <= 15) || 'El documento debe tener menos de 15 caracteres',
+        v => (v && v.length >= 7 && v.length <= 20) || 'El documento debe tener entre 7 a 20 caracteres',
       ],
       celular: '',
       celularRules: [
         v => !!v || 'El número de celular es requerido',
-        v => (v && v.length <= 15) || 'Por favor coloque su número de celular',
+        v => (v && v.length >= 7 && v.length <= 25) || 'Por favor coloque su número de celular',
       ],
       select: null,
       checkbox: false,
@@ -111,6 +111,17 @@
         this.$refs.form.reset()
         this.advertencia = false
       },
+      consulta(){
+        let documento = this.documento;
+        let celular = this.celular;
+        const obj = {'test0': 'holaaaa'};
+        this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
+        .then(respuesta => {
+          console.log(respuesta)
+          console.log(respuesta.data) 
+        })
+        .catch(error => { console.log('error')})
+      }
     }
   }
 </script>

@@ -6,18 +6,18 @@
 
         <v-form ref="form" v-model="valid" lazy-validation class="bg-forms">
           <h1 class="titulo-form">Pagar</h1>
-          <v-text-field v-model="documento" :counter="15" :rules="documentoRules" label="Documento" required>
-          </v-text-field>
+          <v-text-field v-model="documento" :counter="20" :rules="documentoRules" label="Documento" required></v-text-field>
+          <v-text-field v-model="monto" :rules="montoRules" label="Monto" required></v-text-field>
           <v-checkbox v-model="checkbox1" :rules="[v => !!v || 'Por favor seleccione para continuar']"
             label="¿Estás de acuerdo con la información?" required></v-checkbox>
           <template>
 
             <v-dialog v-model="dialog" persistent max-width="600px">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn :disabled="!valid1" color="info" class="mr-3" @click="validate1" v-bind="attrs" v-on="on">
+                <v-btn :disabled="!valid1" color="info" class="mr-3" @click="pago()" v-bind="attrs" v-on="on">
                   Pagar
                 </v-btn>
-                <v-btn :disabled="!valid1" color="success" class="mr-3 float-right"  v-bind="attrs" v-on="on">
+                <v-btn color="success" class="mr-3 float-right"  v-bind="attrs" v-on="on">
                   Confirmar
                 </v-btn>
 
@@ -31,7 +31,7 @@
                     <v-container>
                       <v-row>
                         <v-col cols="12">
-                          <v-text-field v-model="idCompra" :counter="10" :rules="idRules" label="Id"
+                          <v-text-field v-model="id" :rules="idRules" label="Id de la Compra"
                             required></v-text-field>
                         </v-col>
 
@@ -42,7 +42,7 @@
                         </v-col>
                         <v-col cols="12">
                           <v-form ref="form" v-model="valid" lazy-validation>
-                            <v-btn :disabled="!valid2" color="success" class="mr-4" @click="validate2">
+                            <v-btn :disabled="!valid2" color="success" class="mr-4" @click="confirmacion">
                               Confirmar
                             </v-btn>
                             <v-btn color="error" class="mr-4" @click="reset2">
@@ -120,30 +120,25 @@
         v => !!v || 'El documento es requerido',
         v => (v && v.length <= 20) || 'El documento debe tener maximo 20 caracteres',
       ],
-      valor: '',
-      valorRules: [
-        v => !!v || 'El valor es requerido',
-        v => (v && v.length <= 30) || 'Debe tener menos de 30 caracteres',
-      ],
-      celular: '',
-      celularRules: [
-        v => !!v || 'El número de celular es requerido',
-        v => (v && v.length <= 15) || 'Por favor coloque su número de celular',
+      monto:'',
+      montoRules: [
+        v => !!v || 'El monto es requerido',
+        v => /^\d+$/.test(v) || 'Ingrese un monto correcto',
       ],
       checkbox1: false,
       adv1: false,
       subAdv1: true,
       desabilitado: true,
       valid2: true,
-      idCompra: '',
-      idRules: [
-        v => !!v || 'El id de la compra es requerido',
-        v => (v && v.length <= 15) || 'El id debe tener menos de 15 caracteres',
-      ],
+      id: '',
+      // idRules: [
+      //   v => !!v || 'El id de la compra es requerido',
+      //   v => (v && v.length <= 15) || 'El id debe tener menos de 15 caracteres',
+      // ],
       token: '',
       tokenRules: [
         v => !!v || 'El token es requerido',
-        v => (v && v.length <= 30) || 'El token debe tener menos de 30 caracteres',
+        v => (v && v.length == 6) || 'El token debe tener 6 caracteres',
       ],
       select: null,
       checkbox: false,
@@ -168,7 +163,6 @@
               this.celular = ''
             }, 3000);
         }
-
       },
       reset1() {
         this.$refs.form.reset()
@@ -192,6 +186,28 @@
         this.$refs.form.reset()
         this.adv2 = false
       },
+      pago(){
+        let documento = 0;
+        // let monto = this.monto;
+        const obj = {'test0': 'holaaaa'};
+        this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
+        .then(respuesta => {
+          console.log(respuesta)
+          console.log(respuesta.data) 
+        })
+        .catch(error => { console.log('error')})
+      },
+      confirmacion(){
+        let id = this.id;
+        // let token = this.token;
+        const obj = {'test0': 'holaaaa'};
+        this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
+        .then(respuesta => {
+          console.log(respuesta)
+          console.log(respuesta.data) 
+        })
+        .catch(error => { console.log('error')})
+      }
     },
   }
 </script>

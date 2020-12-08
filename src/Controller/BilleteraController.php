@@ -38,73 +38,84 @@ class BilleteraController extends AbstractController
     }
 
     /**
+     * @Route("/test", name="Billetera_test" )
+     */
+    public function test() {
+        return $this->render('soap/index.html.twig');
+    }
+
+    /**
      * @Route("/soapclient", name="Billetera_soapclient" )
      */
     public function soapClient(Request $rq)
     {
-        $rq = json_decode($rq, true);
+        // $rq = $_POST;
+        $rq = $rq->request->get('test0');
         $error = [];
 
-        switch ($rq['tipo']) {
-            case 'registrar':
-                if (!in_array(strlen($rq['documento']), range(7,20))) {
-                    $error['error'] = 'documento';
-                } elseif (!in_array(strlen($rq['nombre']), range(3,25))) {
-                    $error['error'] = 'nombre';
-                } elseif (!in_array(strlen($rq['email']), range(7,30))
-                        || !filter_var($rq['email'], FILTER_VALIDATE_EMAIL)) {
-                    $error['error'] = 'email';
-                } elseif (!in_array(strlen($rq['celular']), range(7,25))) {
-                    $error['error'] = 'email';
-                }
-                break;
+        // switch ($rq['tipo']) {
+        //     case 'registrar':
+        //         if (!in_array(strlen($rq['documento']), range(7,20))) {
+        //             $error['error'] = 'documento';
+        //         } elseif (!in_array(strlen($rq['nombre']), range(3,25))) {
+        //             $error['error'] = 'nombre';
+        //         } elseif (!in_array(strlen($rq['email']), range(7,30))
+        //                 || !filter_var($rq['email'], FILTER_VALIDATE_EMAIL)) {
+        //             $error['error'] = 'email';
+        //         } elseif (!in_array(strlen($rq['celular']), range(7,25))) {
+        //             $error['error'] = 'email';
+        //         }
+        //         break;
             
-            case 'recargar':
-                if (!in_array(strlen($rq['documento']), range(7,20))) {
-                    $error['error'] = 'documento';
-                } elseif (!in_array(strlen($rq['celular']), range(7,30))) {
-                    $error['error'] = 'celular';
-                } elseif (!is_numeric($rq['monto'])) {
-                    $error['error'] = 'monto';
-                }
-                break;
+        //     case 'recargar':
+        //         if (!in_array(strlen($rq['documento']), range(7,20))) {
+        //             $error['error'] = 'documento';
+        //         } elseif (!in_array(strlen($rq['celular']), range(7,30))) {
+        //             $error['error'] = 'celular';
+        //         } elseif (!is_numeric($rq['monto'])) {
+        //             $error['error'] = 'monto';
+        //         }
+        //         break;
 
-            case 'pagar':
-                if (!in_array(strlen($rq['email']), range(7,30))
-                        || !filter_var($rq['email'], FILTER_VALIDATE_EMAIL)) {
-                    $error['error'] = 'email';
-                } elseif (!is_numeric($rq['monto'])) {
-                    $error['error'] = 'monto';
-                }
-                break;
+        //     case 'pagar':
+        //         if (!in_array(strlen($rq['email']), range(7,30))
+        //                 || !filter_var($rq['email'], FILTER_VALIDATE_EMAIL)) {
+        //             $error['error'] = 'email';
+        //         } elseif (!is_numeric($rq['monto'])) {
+        //             $error['error'] = 'monto';
+        //         }
+        //         break;
 
-            case 'confirmar':
-                if (!is_numeric($rq['id'])) {
-                    $error['error'] = 'id'; 
-                } elseif (!is_numeric($rq['token']) || strlen($rq['token']) == 6) {
-                    $error['error'] = 'token' ;
-                }
-                break;
+        //     case 'confirmar':
+        //         if (!is_numeric($rq['id'])) {
+        //             $error['error'] = 'id'; 
+        //         } elseif (!is_numeric($rq['token']) || strlen($rq['token']) == 6) {
+        //             $error['error'] = 'token' ;
+        //         }
+        //         break;
 
-            case 'consultar':
-                if (!in_array(strlen($rq['documento']), range(7,20))) {
-                    $error['error'] = 'documento';
-                } elseif (!in_array(strlen($rq['celular']), range(7,30))) {
-                    $error['error'] = 'celular';
-                }
-                break;
-        }
+        //     case 'consultar':
+        //         if (!in_array(strlen($rq['documento']), range(7,20))) {
+        //             $error['error'] = 'documento';
+        //         } elseif (!in_array(strlen($rq['celular']), range(7,30))) {
+        //             $error['error'] = 'celular';
+        //         }
+        //         break;
+        // }
 
-        if (!empty($error)) {
-            return new JsonResponse($error);
-        }
+        // if (!empty($error)) {
+        //     return new JsonResponse($error);
+        // }
 
-        try {
-            $response = $this->soap->__soapCall($rq['tipo'], array($rq));
-        } catch (SoapFault $th) {
-            $response['error'] = $th->faultstring;
-        }
+        // try {
+        //     $response = $this->soap->__soapCall($rq['tipo'], array($rq));
+        // } catch (SoapFault $th) {
+        //     $response['error'] = $th->faultstring;
+        // }
 
-        return new JsonResponse($response);
+        // return (new Response())->setContent($rq);
+        // return new JsonResponse(['hhola' => 'julio']);
+        return new JsonResponse(['hhola' => $rq]);
+        // return $this->render('soap/respuesta.html.twig', ['respuesta' => 'hola'])
     }
 }

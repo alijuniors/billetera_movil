@@ -29,7 +29,7 @@
           opcion:'Registro',
           subopcion:'Ultimos registros',
           url: '/registro',
-          img: require('../images/fondoRegistro.svg'),
+          img: '../images/fondoRegistro.svg',
         },
         {
           id:2,

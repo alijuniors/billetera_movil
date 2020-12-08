@@ -6,9 +6,9 @@
 
         <v-form ref="form" v-model="valid" lazy-validation class="bg-forms">
           <h1 class="titulo-form">Recargar</h1>
-          <v-text-field v-model="documento" :counter="15" :rules="documentoRules" label="Documento" required></v-text-field>
-          <v-text-field v-model="celular" :counter="15" :rules="celularRules" label="Celular" required></v-text-field>
-          <v-text-field v-model="monto" :counter="15" :rules="montoRules" label="Monto" required></v-text-field>
+          <v-text-field v-model="documento" :counter="20" :rules="documentoRules" label="Documento" required></v-text-field>
+          <v-text-field v-model="celular" :counter="25" :rules="celularRules" label="Celular" required></v-text-field>
+          <v-text-field v-model="monto" :rules="montoRules" label="Monto" required></v-text-field>
           <v-checkbox v-model="checkbox1" :rules="[v => !!v || 'Por favor seleccione para continuar']"
             label="¿Estás de acuerdo con la información?" required></v-checkbox>
 
@@ -33,30 +33,6 @@
             <v-alert type="error">Debe llenar correctamente el form</v-alert>
           </div>
         </div>
-        <div v-if="adv2">
-          <v-card class="mx-auto" max-width="344" outlined>
-            <v-list-item three-line>
-              <v-list-item-content>
-                <div class="overline mb-4">
-                  CONFIRMADO
-                </div>
-                <v-list-item-title class="headline mb-1">
-                  Nombre
-                </v-list-item-title>
-                <v-list-item-subtitle>Pago de 500 bs</v-list-item-subtitle>
-              </v-list-item-content>
-
-              <v-list-item-avatar tile size="80" color="green"></v-list-item-avatar>
-            </v-list-item>
-          </v-card>
-        </div>
-        <div v-else>
-          <div v-if="subAdv2">
-          </div>
-          <div v-else>
-            <v-alert type="error">Los datos que introdujo son incorrectos, por favor intente de nuevo</v-alert>
-          </div>
-        </div>
       </div>
   </div>
 </template>
@@ -70,41 +46,23 @@
       documento: '',
       documentoRules: [
         v => !!v || 'El documento es requerido',
-        v => (v && v.length <= 20) || 'El documento debe tener maximo 20 caracteres',
-      ],
-      valor: '',
-      valorRules: [
-        v => !!v || 'El valor es requerido',
-        v => (v && v.length <= 30) || 'Debe tener menos de 30 caracteres',
+        v => (v && v.length >= 7 && v.length <= 20) || 'El documento debe tener entre 7 a 20 caracteres',
       ],
       celular: '',
       celularRules: [
         v => !!v || 'El número de celular es requerido',
-        v => (v && v.length <= 15) || 'Por favor coloque su número de celular',
+        v => (v && v.length >= 7 && v.length <= 25) || 'Por favor coloque su número de celular',
       ],
       checkbox1: false,
       adv1: false,
       subAdv1: true,
       desabilitado: true,
-      valid2: true,
-      idCompra: '',
-      idRules: [
-        v => !!v || 'El id de la compra es requerido',
-        v => (v && v.length <= 15) || 'El id debe tener menos de 15 caracteres',
-      ],
-      token: '',
-      tokenRules: [
-        v => !!v || 'El token es requerido',
-        v => (v && v.length <= 30) || 'El token debe tener menos de 30 caracteres',
-      ],
       select: null,
-      checkbox: false,
-      adv2: false,
-      subAdv2: true,
+      expresionRegular:'\/d+',
       monto: '',
       montoRules: [
         v => !!v || 'El monto es requerido',
-        v => (v && v.length <= 15) || 'El token debe tener menos de 30 caracteres',
+        v => /^\d+$/.test(v) || 'Ingrese un monto correcto',
       ],
     }),
     methods: {
@@ -131,24 +89,18 @@
         this.$refs.form.reset()
         this.adv1 = false
       },
-      validate2() {
-        if (this.idCompra.length == 15 && this.token.length == 30) {
-          this.$refs.form.validate(),
-            this.adv2 = true
-        } else {
-          this.subAdv2 = false,
-            setTimeout(() => {
-              this.subAdv2 = true,
-                this.idCompra = '',
-                this.token = ''
-            }, 3000);
-        }
-
-      },
-      reset2() {
-        this.$refs.form.reset()
-        this.adv2 = false
-      },
+      recarga(){
+        let documento = 0;
+        // let celular = this.celular;
+        // let monto = this.monto;
+        const obj = {'test0': 'holaaaa'};
+        this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
+        .then(respuesta => {
+          console.log(respuesta)
+          console.log(respuesta.data) 
+        })
+        .catch(error => { console.log('error')})
+      }
     },
   }
 </script>

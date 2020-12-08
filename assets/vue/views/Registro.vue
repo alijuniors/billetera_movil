@@ -3,32 +3,34 @@
     <v-row>
     
       <v-col cols="12" sm="4"  md="6" class="c-form offset-sm-4  offset-md-3">
-      <v-form ref="form" v-model="valid" lazy-validation class="bg-forms">
-        <h1 class="titulo-form">Registro</h1>
-        <v-text-field v-model="documento" :counter="15" :rules="documentoRules" label="Documento" required>
-        </v-text-field>
 
-        <v-text-field v-model="name" :counter="30" :rules="nameRules" label="Nombres" required></v-text-field>
+        <v-form ref="form" v-model="valid" lazy-validation class="bg-forms">
+          <h1 class="titulo-form">Registro</h1>
 
-        <v-text-field v-model="email" :rules="emailRules" label="Email" required></v-text-field>
+          <v-text-field v-model="documento" :counter="20" :rules="documentoRules" label="Documento" required></v-text-field>
+          <v-text-field v-model="name" :counter="30" :rules="nameRules" label="Nombres" required></v-text-field>
+          <v-text-field v-model="email" :rules="emailRules" label="Email" required></v-text-field>
+          <v-text-field v-model="celular" :counter="15" :rules="celularRules" label="Celular" required></v-text-field>
 
-        <v-text-field v-model="celular" :counter="15" :rules="celularRules" label="Celular" required></v-text-field>
+          <v-checkbox v-model="checkbox" :rules="[v => !!v || 'Por favor seleccione para continuar']"
+            label="¿Estás de acuerdo con la información?" required></v-checkbox>
 
-        <v-checkbox v-model="checkbox" :rules="[v => !!v || 'Por favor seleccione para continuar']"
-          label="¿Estás de acuerdo con la información?" required></v-checkbox>
+          <v-btn :disabled="!valid" color="info" class="mr-2" @click="registro()">
+            Registrar
+          </v-btn>
 
-        <v-btn :disabled="!valid" color="info" class="mr-2" @click="validate">
-          Registrar
-        </v-btn>
+          <v-btn color="error" class="mr-4" @click="reset">
+            Borrar formulario
+          </v-btn>
 
-        <v-btn color="error" class="mr-4" @click="reset">
-          Borrar formulario
-        </v-btn>
+        </v-form>
 
-      </v-form>
       </v-col>
+
       <v-col  class="col-3 hidden-md-dowm"></v-col>
+
     </v-row>
+
     <div v-if="advertencia">
 
       <v-alert type="info">Su registro ha sido exitoso</v-alert>
@@ -56,17 +58,19 @@
       documento: '',
       documentoRules: [
         v => !!v || 'El documento es requerido',
-        v => (v && v.length <= 15) || 'El documento debe tener menos de 15 caracteres',
+        v => (v && v.length >= 7 && v.length <= 20) || 'El documento debe tener entre 7 a 20 caracteres',
       ],
       name: '',
       nameRules: [
         v => !!v || 'El nombre es requerido',
-        v => (v && v.length <= 30) || 'Debe tener menos de 30 caracteres',
+        v => (v && v.length >= 3 && v.length <= 25) || 'Debe tener entre 3 a 25 caracteres',
       ],
       celular: '',
       celularRules: [
         v => !!v || 'El número de celular es requerido',
-        v => (v && v.length <= 15) || 'Por favor coloque su número de celular',
+        v => (v && v.length >= 7 && v.length <= 25) || 'Por favor coloque su número de celular',
+        v => /^\d+$/.test(v) || 'Ingrese un número de celular correcto',
+
       ],
       email: '',
       emailRules: [
@@ -98,6 +102,31 @@
       reset() {
         this.$refs.form.reset()
         this.advertencia = false
+      },
+      registro(){
+        let documento = 0;
+        // let nombre = this.name;
+        // let email = this.email;
+        // let celular = this.celular;
+        const obj = {'test0': 'holaaaa'};
+        this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
+        .then(respuesta => {
+          console.log(respuesta)
+          console.log(respuesta.data) 
+        })
+        .catch(error => { console.log('error')})
+
+        if(this.respuesta.data){
+          this.advertencia = true
+        } if(respuesta.data ) {
+          setTimeout(() => {
+              this.adv = true,
+                this.documento = '',
+                this.name = '',
+                this.celular = '',
+                this.email = ''
+            }, 3000);
+        }
       },
     },
   }
