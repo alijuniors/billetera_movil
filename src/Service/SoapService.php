@@ -121,14 +121,30 @@ class SoapService
 
     public function confirmar($data)
     {
-        $r = false;
+        $r = [0,0];
         $operacion = $this->em->getRepository(Operaciones::class)->findOneBy([
             'id' => $data['id'],
             'token' => $data['token']
         ]);
         
-        if ($operacion != false) {
-            $r = true;
+        if (!empty($operacion->getId())) {
+            $r[0] = 1;
+
+            $saldo = $this->em->getRepository(Saldos::class)->findOneBy([
+                'persona' => $operacion->getPersona()
+            ]);
+            
+            $monto = $saldo->getMonto() - $operacion->getMonto();
+            $saldo->setMonto($monto);
+            $this->em->persist($saldo);
+            $this->em->flush();
+
+            $operacion->setToken(null);
+            $operacion->setTipo('PAGO');
+            $this->em->persist($operacion);
+            $this->em->flush();
+
+            $r[1] = 1;
         }
 
         return $r;

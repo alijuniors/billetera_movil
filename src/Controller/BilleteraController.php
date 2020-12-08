@@ -46,11 +46,13 @@ class BilleteraController extends AbstractController
             'nombre' => 'Frank',
             'email' => 'ejemplo',
             'celular' => 'hola',
-            'monto' => 1997
+            'monto' => 1997,
+            'id' => 16,
+            'token' => 599950
         ];
-        // $response = $this->soap->__soapCall('registrar', array($person));
+
         try {
-            $response = $this->soap->__soapCall('pagar', array($person));
+            $response = $this->soap->__soapCall('confirmar', array($person));
         } catch (\SoapFault $th) {
             $response = $th->faultstring;
         }
@@ -64,7 +66,7 @@ class BilleteraController extends AbstractController
         //         # code...
         //         break;
         // }
-        // var_dump($response);
+        var_dump($response);
         return (new Response())->setContent('respuesta');
     }
 }
