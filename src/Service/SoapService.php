@@ -153,12 +153,12 @@ class SoapService
     public function consultar($data)
     {
         $r = false;
-        $sql = 'SELECT s.monto FROM saldos s INNER JOIN personas p ON p.id = s.persona_id '.
+        $sql = 'SELECT s.monto, p.nombre FROM saldos s INNER JOIN personas p ON p.id = s.persona_id '.
                 'WHERE p.documento = :doc AND p.celular = :cel';
         $query = $this->em->getConnection()->prepare($sql);
 
         if ($query->execute(['doc' => $data['documento'], 'cel' => $data['celular']])) {
-            $r = $query->fetchAllAssociative();
+            $r = $query->fetchAssociative();
         }
         
         return $r;

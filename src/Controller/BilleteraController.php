@@ -52,7 +52,7 @@ class BilleteraController extends AbstractController
         ];
 
         try {
-            $response = $this->soap->__soapCall('confirmar', array($person));
+            $response = $this->soap->__soapCall('consultar', array($person));
         } catch (\SoapFault $th) {
             $response = $th->faultstring;
         }
