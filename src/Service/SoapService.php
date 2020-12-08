@@ -60,7 +60,7 @@ class SoapService
             $r[0] = 1;
             $operacion = (new Operaciones())
                 ->setMonto($data['monto'])
-                ->setTipo('recarga')
+                ->setTipo('RECARGA')
                 ->setToken(null)
                 ->setPersona($persona);
             
@@ -97,21 +97,25 @@ class SoapService
             'celular' => $data['celular']
         ]);
 
-        if ($persona != false) {
+        if (!empty($persona->getId())) {
             $r[0] = 1;
-
 
             $operacion = (new Operaciones())
                 ->setMonto($data['monto'])
-                ->setTipo($data['tipo'])
-                ->setToken(rand(0, 999999));
+                ->setTipo('SOLICITUD DE PAGO')
+                ->setToken(rand(0, 999999))
+                ->setPersona($persona);
 
-            if ($this->em->persist($operacion) != false && $this->em->flush() != false) {
+            $this->em->persist($operacion);
+            $this->em->flush();
+
+            if (!empty($operacion->getId())) {
                 $r[1] = 1;
-                $r[2] = $operacion->getId().' '.$operacion->getToken();
+                $r['id'] = $operacion->getId();
+                $r['token'] = $operacion->getToken();
             }
         }
-        
+
         return $r;
     }
 
