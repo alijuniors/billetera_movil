@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use SoapFault;
 use SoapClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -36,37 +38,73 @@ class BilleteraController extends AbstractController
     }
 
     /**
-     * @Route("/soapclient", name="Billetera_soapclient")
+     * @Route("/soapclient", name="Billetera_soapclient" )
      */
-    public function soapClient()
+    public function soapClient(Request $rq)
     {
-        
-        $person = [
-            'documento' => '26250360',
-            'nombre' => 'Frank',
-            'email' => 'ejemplo',
-            'celular' => 'hola',
-            'monto' => 1997,
-            'id' => 16,
-            'token' => 599950
-        ];
+        $rq = json_decode($rq, true);
+        $error = [];
 
-        try {
-            $response = $this->soap->__soapCall('consultar', array($person));
-        } catch (\SoapFault $th) {
-            $response = $th->faultstring;
+        switch ($rq['tipo']) {
+            case 'registrar':
+                if (!in_array(strlen($rq['documento']), range(7,20))) {
+                    $error['error'] = 'documento';
+                } elseif (!in_array(strlen($rq['nombre']), range(3,25))) {
+                    $error['error'] = 'nombre';
+                } elseif (!in_array(strlen($rq['email']), range(7,30))
+                        || !filter_var($rq['email'], FILTER_VALIDATE_EMAIL)) {
+                    $error['error'] = 'email';
+                } elseif (!in_array(strlen($rq['celular']), range(7,25))) {
+                    $error['error'] = 'email';
+                }
+                break;
+            
+            case 'recargar':
+                if (!in_array(strlen($rq['documento']), range(7,20))) {
+                    $error['error'] = 'documento';
+                } elseif (!in_array(strlen($rq['celular']), range(7,30))) {
+                    $error['error'] = 'celular';
+                } elseif (!is_numeric($rq['monto'])) {
+                    $error['error'] = 'monto';
+                }
+                break;
+
+            case 'pagar':
+                if (!in_array(strlen($rq['email']), range(7,30))
+                        || !filter_var($rq['email'], FILTER_VALIDATE_EMAIL)) {
+                    $error['error'] = 'email';
+                } elseif (!is_numeric($rq['monto'])) {
+                    $error['error'] = 'monto';
+                }
+                break;
+
+            case 'confirmar':
+                if (!is_numeric($rq['id'])) {
+                    $error['error'] = 'id'; 
+                } elseif (!is_numeric($rq['token']) || strlen($rq['token']) == 6) {
+                    $error['error'] = 'token' ;
+                }
+                break;
+
+            case 'consultar':
+                if (!in_array(strlen($rq['documento']), range(7,20))) {
+                    $error['error'] = 'documento';
+                } elseif (!in_array(strlen($rq['celular']), range(7,30))) {
+                    $error['error'] = 'celular';
+                }
+                break;
         }
 
-        // switch ($data['tipo']) {
-        //     case 'registrar':
-        //         # code...
-        //         break;
-            
-        //     default:
-        //         # code...
-        //         break;
-        // }
-        var_dump($response);
-        return (new Response())->setContent('respuesta');
+        if (!empty($error)) {
+            return new JsonResponse($error);
+        }
+
+        try {
+            $response = $this->soap->__soapCall($rq['tipo'], array($rq));
+        } catch (SoapFault $th) {
+            $response['error'] = $th->faultstring;
+        }
+
+        return new JsonResponse($response);
     }
 }
