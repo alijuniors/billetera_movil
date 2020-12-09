@@ -36,8 +36,6 @@
                           <v-divider class="mx-4"></v-divider>
 
                           <v-card-title>Su saldo es: {{datos.monto}}</v-card-title>
-                          <v-chip active-class="deep-purple accent-4 white--text" column>530 Bs</v-chip>
-
 
                         </v-card>
                       </div>
@@ -58,13 +56,6 @@
         </v-form>
       </v-col>
     </v-row>
-
-
-
-
-
-
-
 
   </div>
 </template>
@@ -91,20 +82,6 @@
       adv: true
     }),
     methods: {
-      validate() {
-        if (this.documento.length == 15 && this.celular.length == 15) {
-          this.$refs.form.validate(),
-            this.advertencia = true
-        } else {
-          this.adv = false,
-            setTimeout(() => {
-              this.adv = true,
-                this.documento = '',
-                this.celular = ''
-            }, 3000);
-        }
-
-      },
       reset() {
         this.$refs.form.reset()
         this.advertencia = false
@@ -123,7 +100,6 @@
           console.log(respuesta.data), 
           this.advertencia = true
           setTimeout(() => {
-              this.advertencia = false,
                 this.documento = '',
                 this.celular = ''
             }, 3000);

@@ -90,13 +90,9 @@
                 <div class="overline mb-4">
                   CONFIRMADO
                 </div>
-                <v-list-item-title class="headline mb-1">
-                  {{datos.nombre}}
-                </v-list-item-title>
                 <v-list-item-subtitle>Pago de procesado</v-list-item-subtitle>
               </v-list-item-content>
 
-              <v-list-item-avatar tile size="80" color="green"></v-list-item-avatar>
             </v-list-item>
           </v-card>
         </div>
