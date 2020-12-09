@@ -9,8 +9,6 @@
 
           <v-text-field v-model="celular" :counter="25" :rules="celularRules" label="Celular" required></v-text-field>
 
-          <v-checkbox v-model="checkbox" :rules="[v => !!v || 'Por favor seleccione para continuar']"
-            label="¿Estás de acuerdo con la información?" required></v-checkbox>
           <template>
             <v-row justify="center">
               <v-dialog v-model="dialog" persistent max-width="290">
@@ -32,12 +30,12 @@
                             <v-progress-linear color="deep-purple" height="10" indeterminate></v-progress-linear>
                           </template>
 
-                          <v-card-title>Saldo actual</v-card-title>
+                          <v-card-title>{{datos.nombre}}</v-card-title>
 
 
                           <v-divider class="mx-4"></v-divider>
 
-                          <v-card-title>Nombre</v-card-title>
+                          <v-card-title>Su saldo es: {{datos.monto}}</v-card-title>
                           <v-chip active-class="deep-purple accent-4 white--text" column>530 Bs</v-chip>
 
 
@@ -75,6 +73,7 @@
   export default {
     name: 'Consulta',
     data: () => ({
+      datos:[],
       dialog: false,
       valid: true,
       documento: '',
@@ -88,7 +87,6 @@
         v => (v && v.length >= 7 && v.length <= 25) || 'Por favor coloque su número de celular',
       ],
       select: null,
-      checkbox: false,
       advertencia: false,
       adv: true
     }),
@@ -121,10 +119,24 @@
         };
         this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
         .then(respuesta => {
-          console.log(respuesta)
-          console.log(respuesta.data) 
+          console.log(respuesta),
+          console.log(respuesta.data), 
+          this.advertencia = true
+          setTimeout(() => {
+              this.advertencia = false,
+                this.documento = '',
+                this.celular = ''
+            }, 3000);
+          this.datos = respuesta.data
         })
-        .catch(error => { console.log('error')})
+        .catch(error => { 
+          console.log('error')
+          setTimeout(() => {
+              this.adv = true,
+                this.documento = '',
+                this.celular = ''
+            }, 3000);
+          })
       }
     }
   }

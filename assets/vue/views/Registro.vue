@@ -12,9 +12,6 @@
           <v-text-field v-model="email" :rules="emailRules" label="Email" required></v-text-field>
           <v-text-field v-model="celular" :counter="15" :rules="celularRules" label="Celular" required></v-text-field>
 
-          <v-checkbox v-model="checkbox" :rules="[v => !!v || 'Por favor seleccione para continuar']"
-            label="¿Estás de acuerdo con la información?" required></v-checkbox>
-
           <v-btn :disabled="!valid" color="info" class="mr-2" @click="registro()">
             Registrar
           </v-btn>
@@ -31,7 +28,7 @@
 
     </v-row>
 
-    <div v-if="advertencia">
+    <div class="fixed" v-if="advertencia">
 
       <v-alert type="info">Su registro ha sido exitoso</v-alert>
 
@@ -78,27 +75,10 @@
         v => /.+@.+\..+/.test(v) || 'El email debe ser válido',
       ],
       select: null,
-      checkbox: false,
       advertencia: false,
       adv: true
     }),
     methods: {
-      validate() {
-        if (this.documento.length == 15 && this.name.length > 5 && this.celular.length == 15) {
-          this.$refs.form.validate(),
-            this.advertencia = true
-        } else {
-          this.adv = false,
-            setTimeout(() => {
-              this.adv = true,
-                this.documento = '',
-                this.name = '',
-                this.celular = '',
-                this.email = ''
-            }, 3000);
-        }
-
-      },
       reset() {
         this.$refs.form.reset()
         this.advertencia = false
@@ -117,13 +97,18 @@
         };
         this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
         .then(respuesta => {
-          console.log(respuesta.data) 
-        })
-        .catch(error => { console.log('Error Axios')})
-
-        if(this.respuesta.data){
+          console.log(respuesta.data),
+          setTimeout(() => {
+              this.documento = '',
+              this.name = '',
+              this.celular = '',
+              this.email = ''
+              this.advertencia = true
+            }, 3000);
           this.advertencia = true
-        } if(respuesta.data ) {
+        })
+        .catch(error => { 
+          console.log('Error Axios'),
           setTimeout(() => {
               this.adv = true,
                 this.documento = '',
@@ -131,12 +116,9 @@
                 this.celular = '',
                 this.email = ''
             }, 3000);
-        }
+          })
+        
       },
     },
   }
 </script>
-
-<style>
-
-</style>

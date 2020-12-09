@@ -20,29 +20,24 @@
         </v-list>
       </v-card>
 
-    <!-- <v-col cols="12" v-for="lis of lista" :key="lis.id">
-
-      <v-card class=" mx-auto v-card-w">
-        <v-img class="v-card-img" :src="lis.img" width="50px" height="50px">
-            <v-card-title class="white--text mt-8" >
-              <v-icon class="d-flex" color="white">{{lis.icon}}</v-icon>
-              <h1 class="mr-md-5 ">
-                {{lis.opcion}}
-              </h1>
-
-            </v-card-title>
-          </v-img>
-      </v-card>
-    </v-col> -->
-
     </v-menu>
   </div>
     </div>
 </template>
 
 <script>
+import fondoMenuInicio from '../images/fondoMenuInicio.svg'
+import fondoMenuRegistro from '../images/fondoMenuRegistro.svg'
+import fondoMenuRecarga from '../images/fondoMenuRecarga.svg'
+import fondoMenuPago from '../images/fondoMenuPago.svg'
+import fondoMenuConsulta from '../images/fondoMenuConsulta.svg'
 export default {
     data: () => ({
+      fondoMenuInicio:fondoMenuInicio,
+      fondoMenuRegistro:fondoMenuRegistro,
+      fondoMenuRecarga:fondoMenuRecarga,
+      fondoMenuPago:fondoMenuPago,
+      fondoMenuConsulta:fondoMenuConsulta,
       fav: true,
       menu: false,
       message: false,
@@ -53,35 +48,35 @@ export default {
           opcion:'Inicio',
           url: '/',
           icon: 'mdi-home',
-          img: require('../images/fondoMenuInicio.svg')
+          img: fondoMenuInicio,
         },
         {
           id:1,
           opcion:'Registro',
           url: '/registro',
           icon: 'mdi-account-plus-outline',
-          img: require('../images/fondoMenuRegistro.svg')
+          img: fondoMenuRegistro,
         },
         {
           id:2,
           opcion:'Recargar',
           url: '/recarga',
           icon: 'mdi-reload',
-          img: require('../images/fondoMenuRecarga.svg')
+          img: fondoMenuRecarga,
         },
         {
           id:3,
           opcion:'Pagar',
           url: '/pago',
           icon: 'mdi-cash',
-          img: require('../images/fondoMenuPago.svg')
+          img: fondoMenuPago,
         },
         {
           id:4,
           opcion:'Consultar',
           url: '/consulta',
           icon: 'mdi-book-search',
-          img: require('../images/fondoMenuConsulta.svg')
+          img: fondoMenuConsulta,
         }
       ]
   }),

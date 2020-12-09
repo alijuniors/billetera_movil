@@ -9,8 +9,6 @@
           <v-text-field v-model="documento" :counter="20" :rules="documentoRules" label="Documento" required></v-text-field>
           <v-text-field v-model="celular" :counter="25" :rules="celularRules" label="Celular" required></v-text-field>
           <v-text-field v-model="monto" :rules="montoRules" label="Monto" required></v-text-field>
-          <v-checkbox v-model="checkbox1" :rules="[v => !!v || 'Por favor seleccione para continuar']"
-            label="¿Estás de acuerdo con la información?" required></v-checkbox>
 
             <v-btn :disabled="!valid1" color="info" class="mr-3" @click="recarga()" v-bind="attrs" v-on="on">
               Recargar
@@ -53,7 +51,6 @@
         v => !!v || 'El número de celular es requerido',
         v => (v && v.length >= 7 && v.length <= 25) || 'Por favor coloque su número de celular',
       ],
-      checkbox1: false,
       adv1: false,
       subAdv1: true,
       desabilitado: true,
@@ -66,25 +63,6 @@
       ],
     }),
     methods: {
-      validate1() {
-        if (this.documento.length == 15 && this.valor.length == 30 && this.celular.length == 15) {
-          this.$refs.form.validate(),
-            this.adv1 = true,
-            this.desabilitado = false,
-            setTimeout(() => {
-              this.adv1 = false
-            }, 6000)
-        } else {
-          this.subAdv1 = false,
-            setTimeout(() => {
-              this.subAdv1 = true,
-                this.documento = '',
-                this.valor = ''
-              this.celular = ''
-            }, 3000);
-        }
-
-      },
       reset1() {
         this.$refs.form.reset()
         this.adv1 = false
@@ -102,28 +80,28 @@
         this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
         .then(respuesta => {
           // console.log(respuesta)
-          console.log(respuesta.data) 
-        })
-        .catch(error => { console.log('error')})
-      },
-      pagar(){
-        let documento = this.documento;
-        let monto = this.monto;
-        const obj = {
-          'tipo': 'pagar',
-          'documento':documento,
-          'monto':monto
-        };
-        this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
-        .then(respuesta => {
-          // console.log(respuesta)
-          console.log(respuesta.data) 
+          console.log(respuesta.data),
+          this.adv1 = true,
+            this.desabilitado = false,
+            setTimeout(() => {
+              this.documento = '',
+              this.celular = '',
+              this.monto = ''
+              this.adv1 = false
+            }, 3000)
         })
         .catch(error => { 
-          console.log('error')
-          console.log(error)
+          console.log('error'),
+          this.subAdv1 = false,
+            setTimeout(() => {
+              this.subAdv1 = true,
+                this.documento = '',
+                this.valor = ''
+              this.celular = ''
+            }, 3000);
+        
         })
-      }
+      },
     },
   }
 </script>

@@ -91,9 +91,9 @@
                   CONFIRMADO
                 </div>
                 <v-list-item-title class="headline mb-1">
-                  Nombre
+                  {{datos.nombre}}
                 </v-list-item-title>
-                <v-list-item-subtitle>Pago de 500 bs</v-list-item-subtitle>
+                <v-list-item-subtitle>Pago de procesado</v-list-item-subtitle>
               </v-list-item-content>
 
               <v-list-item-avatar tile size="80" color="green"></v-list-item-avatar>
@@ -115,6 +115,7 @@
   export default {
     name: 'Pago',
     data: () => ({
+      datos:[],
       dialog: false,
       valid1: true,
       email: '',
@@ -144,41 +145,9 @@
       subAdv2: true
     }),
     methods: {
-      validate1() {
-        if (this.documento.length == 15 && this.valor.length == 30 && this.celular.length == 15) {
-          this.$refs.form.validate(),
-            this.adv1 = true,
-            this.desabilitado = false,
-            setTimeout(() => {
-              this.adv1 = false
-            }, 6000)
-        } else {
-          this.subAdv1 = false,
-            setTimeout(() => {
-              this.subAdv1 = true,
-                this.documento = '',
-                this.valor = ''
-              this.celular = ''
-            }, 3000);
-        }
-      },
       reset1() {
         this.$refs.form.reset()
         this.adv1 = false
-      },
-      validate2() {
-        if (this.idCompra.length == 15 && this.token.length == 30) {
-          this.$refs.form.validate(),
-            this.adv2 = true
-        } else {
-          this.subAdv2 = false,
-            setTimeout(() => {
-              this.subAdv2 = true,
-                this.idCompra = '',
-                this.token = ''
-            }, 3000);
-        }
-
       },
       reset2() {
         this.$refs.form.reset()
@@ -194,12 +163,23 @@
         };
         this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
         .then(respuesta => {
-          // console.log(respuesta)
           console.log(respuesta.data) 
+          this.adv1 = true,
+            this.desabilitado = false,
+            this.email = '',
+            this.monto = ''
+            setTimeout(() => {
+              this.adv1 = false
+            }, 3000)
         })
         .catch(error => {
-          console.log('Error Axios'),
-          console.log(error)
+          console.log('Error'),
+          setTimeout(() => {
+              this.subAdv1 = true,
+              this.documento = '',
+              this.valor = ''
+              this.celular = ''
+            }, 3000);
         })
       },
       confirmacion(){
@@ -213,9 +193,18 @@
         this.$http.post("http://localhost/billetera_movil/public/index.php/soapclient", obj)
         .then(respuesta => {
           // console.log(respuesta)
-          console.log(respuesta.data) 
+          console.log(respuesta.data), 
+          this.adv2 = true
+          this.datos = respuesta.data
         })
-        .catch(error => { console.log('error')})
+        .catch(error => { 
+          console.log('error')
+          setTimeout(() => {
+              this.subAdv2 = true,
+                this.idCompra = '',
+                this.token = ''
+            }, 3000);
+          })
       }
     },
   }
