@@ -27,24 +27,9 @@ class BilleteraController extends AbstractController
     /**
      * @Route("/", name="billetera")
      */
-    public function index(): Response
+    public function index()
     {
-        $words = ['sky', 'cloud', 'wood', 'rock', 'forest',
-            'mountain', 'breeze'];
-        // return (new Response())->setContent('hi');
-        return $this->render('billetera/index.html.twig', [
-            'words' => $words
-        ]);
-    }
-
-    /**
-     * @Route("/test", name="Billetera_test" )
-     */
-    public function test()
-    {
-        $mail = mail('frankchavezmj@gmail.com', 'Hola', 'Hola');
-        var_dump($mail);
-        return (new Response())->setContent('hola');
+        return $this->render('billetera/index.html.twig');
     }
 
     /**

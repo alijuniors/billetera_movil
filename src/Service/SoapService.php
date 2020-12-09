@@ -6,14 +6,19 @@ use App\Entity\Saldos;
 use App\Entity\Personas;
 use App\Entity\Operaciones;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 class SoapService
 {
     private $em;
 
-    public function __construct(EntityManagerInterface $em)
+    private $mailer;
+
+    public function __construct(EntityManagerInterface $em, MailerInterface $mailer)
     {
         $this->em = $em;
+        $this->mailer = $mailer;
     }
 
     public function registrar($data)
@@ -91,7 +96,7 @@ class SoapService
     
     public function pagar($data)
     {
-        $r = [0,0,0];
+        $r = [0,0];
         $persona = $this->em->getRepository(Personas::class)->findOneBy([
             'email' => $data['email'],
         ]);
@@ -110,10 +115,15 @@ class SoapService
 
             if (!empty($operacion->getId())) {
                 $r[1] = 1;
-                $msg = 'Su id de sesion es: '.$operacion->getId().' y su token: '.$operacion->getToken();
-                if (mail($persona->getEmail(), 'Notification', $msg)) {
-                    $r[2] = 1;
-                }
+                $msg = '<p>Su ID de Sesion es: <strong>'.$operacion->getId().'</strong><br>'
+                        .'Su token de acceso es: <strong>'.$operacion->getToken().'</strong></strong></p>';
+                $mail = (new Email())
+                    ->from('billeteramovilalisojo@gmail.com')
+                    ->to($persona->getEmail())
+                    ->subject('Solicitud de Pago')
+                    ->text('ID de Sesion y Token de Acceso')
+                    ->html($msg);
+                $this->mailer->send($mail);
             }
         }
 
