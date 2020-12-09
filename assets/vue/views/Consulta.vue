@@ -102,7 +102,7 @@
           setTimeout(() => {
                 this.documento = '',
                 this.celular = ''
-            }, 3000);
+            }, 500);
           this.datos = respuesta.data
         })
         .catch(error => { 
@@ -111,7 +111,7 @@
               this.adv = true,
                 this.documento = '',
                 this.celular = ''
-            }, 3000);
+            }, 500);
           })
       }
     }

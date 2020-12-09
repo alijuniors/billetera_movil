@@ -76,8 +76,8 @@ class BilleteraController extends AbstractController
             case 'confirmar':
                 if (!is_numeric($data['id'])) {
                     $error['error'] = 'id'; 
-                } elseif (!is_numeric($data['token']) || strlen($data['token']) == 6) {
-                    $error['error'] = 'token' ;
+                } elseif (!is_numeric($data['token']) || strlen($data['token']) != 6) {
+                    $error['error'] = 'token';
                 }
                 break;
 

@@ -32,7 +32,7 @@
                     <v-container>
                       <v-row>
                         <v-col cols="12">
-                          <v-text-field v-model="id" :rules="idRules" label="Id de la Compra"
+                          <v-text-field v-model="id" :rules="idRules" label="Id de sesión"
                             required></v-text-field>
                         </v-col>
 
@@ -57,7 +57,7 @@
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="dialog = false">
-                      Close
+                      Cerrar
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -90,7 +90,7 @@
                 <div class="overline mb-4">
                   CONFIRMADO
                 </div>
-                <v-list-item-subtitle>Pago de procesado</v-list-item-subtitle>
+                <v-list-item-subtitle>Pago procesado</v-list-item-subtitle>
               </v-list-item-content>
 
             </v-list-item>
@@ -166,7 +166,7 @@
             this.monto = ''
             setTimeout(() => {
               this.adv1 = false
-            }, 3000)
+            }, 500)
         })
         .catch(error => {
           console.log('Error'),
@@ -175,7 +175,7 @@
               this.documento = '',
               this.valor = ''
               this.celular = ''
-            }, 3000);
+            }, 500);
         })
       },
       confirmacion(){
@@ -190,7 +190,11 @@
         .then(respuesta => {
           // console.log(respuesta)
           console.log(respuesta.data), 
-          this.adv2 = true
+          setTimeout(() => {
+              this.adv2 = true,
+                this.idCompra = '',
+                this.token = ''
+            }, 500);
           this.datos = respuesta.data
         })
         .catch(error => { 
@@ -199,7 +203,7 @@
               this.subAdv2 = true,
                 this.idCompra = '',
                 this.token = ''
-            }, 3000);
+            }, 500);
           })
       }
     },

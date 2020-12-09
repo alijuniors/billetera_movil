@@ -104,7 +104,7 @@
               this.celular = '',
               this.email = ''
               this.advertencia = true
-            }, 3000);
+            }, 500);
           this.advertencia = true
         })
         .catch(error => { 
@@ -115,7 +115,7 @@
                 this.name = '',
                 this.celular = '',
                 this.email = ''
-            }, 3000);
+            }, 500);
           })
         
       },
